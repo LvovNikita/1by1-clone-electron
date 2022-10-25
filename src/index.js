@@ -1,4 +1,5 @@
 const fs = require('node:fs')
+const os = require('node:os')
 const path = require('node:path')
 
 const { app, BrowserWindow, ipcMain } = require('electron');
@@ -30,13 +31,14 @@ const createWindow = () => {
     mainWindow.on('ready-to-show', () => {
         // FIXME: get file content and map as additional function
         // FIXME: sync to async
-        const fileTreeContent = fs.readdirSync('/', { // TODO: real folder
+        const fileTreeContent = fs.readdirSync(os.homedir(), { // TODO: real folder
             withFileTypes: true 
         })
         mainWindow.webContents.send('getFileTree', fileTreeContent
             .map(fsDirEntity => ({
                 name: fsDirEntity.name, 
-                isDirectory: fsDirEntity.isDirectory()
+                isDirectory: fsDirEntity.isDirectory(),
+                absolutePath: path.join(os.homedir(), fsDirEntity.name)
             }))
         )
     })
@@ -48,10 +50,11 @@ const createWindow = () => {
 app.on('ready', () => {
     createWindow()
 
-    ipcMain.handle('getFolderContent', () => {
+    ipcMain.handle('getFolderContent', (event, absolutePath) => {
+        console.log(absolutePath)
         // FIXME: refactor
         // FIXME: sync to async
-        const fileTreeContent = fs.readdirSync('/home/sa3n/Music', { // TODO: real folder
+        const fileTreeContent = fs.readdirSync(absolutePath, { // TODO: real folder
             withFileTypes: true 
         })
         return fileTreeContent

@@ -1,7 +1,14 @@
 const fileTreeListEl = document.querySelector('#fileTree ul')
+const fileListEl = document.querySelector('#fileList ul')
+let activeFolder
+// let activeFile
 
 window.electronAPI.getFileTree((event, fileTreeContent) => {
-    for (const { name, isDirectory } of fileTreeContent) {
+    renderFileTree(fileTreeContent)
+})
+
+function renderFileTree (fileTreeContent) {
+    for (const { name, isDirectory, absolutePath } of fileTreeContent) {
         if (isDirectory) {
             const folderEl = document.createElement('li')
 
@@ -15,19 +22,43 @@ window.electronAPI.getFileTree((event, fileTreeContent) => {
             
             const folderNameEl = document.createElement('span')
             folderNameEl.innerText = name
-            // FIXME: refactor: getFoldeContent as additional function
+            folderNameEl.setAttribute('absolutePath', absolutePath)
             folderNameEl.addEventListener('click', async (event) => {
-                console.log('Clicked: ', event)
-                console.log(await window.electronAPI.getFolderContent())
+                renderFileList(event)
             })
             folderEl.appendChild(folderNameEl)
-            
+
             fileTreeListEl.append(folderEl)
         }
     }
-})
+}
 
+// class Button {
+//     constructor (innerText) {
+//         this.innerText = innerText
+//     }
+// }
 
-// ).addEventListener('click', () => {
-//     console.log('clicked!')
-// })
+// class ExpandButton extends Button {
+//     constructor (innerText) {
+//         super(innerText)
+//         this.className = 'expandFolderBtn'
+//     }
+// }
+
+async function renderFileList (event) {
+    activeFolder?.classList.remove('active')
+    const fileListArr = await window.electronAPI.getFolderContent(event.target.getAttribute('absolutePath'))
+    fileListEl.innerHTML = ''
+    for (const file of fileListArr) {
+        const fileEl = document.createElement('li')
+        fileEl.innerText = file.name
+        fileListEl.append(fileEl)
+    }
+    activeFolder = event.target
+    activeFolder.className = 'active'
+}
+
+// getFileTree
+// renderFileTree
+// renderFileList

@@ -21,16 +21,21 @@ class ExpandButton extends Button {
         this.el.className = 'expandFolderBtn'
         this.el.addEventListener('click', async (event) => {
             const currentFolderEl = event.target.parentElement
-            console.log(currentFolderEl)
-            const currentFolderAbsolutePath = currentFolderEl.getAttribute('absolutePath')
-            console.log(currentFolderAbsolutePath)
-            let fileTreeContent = await window.electronAPI.getFolderContent(currentFolderAbsolutePath)
-            fileTreeContent = fileTreeContent.filter(file => file.isDirectory)
-            renderFileSubTree(fileTreeContent, currentFolderEl)
-            // TODO: for testing
-            // const subFolder = document.createElement('li')
-            // subFolder.innerText = 'SUBFOLDER!'
-            // currentFolderEl.appendChild(subFolder)
+            if (event.target.getAttribute('isOpened') !== 'true') {
+                event.target.setAttribute('isOpened', 'true')
+                const currentFolderAbsolutePath = currentFolderEl.getAttribute('absolutePath')
+                let fileTreeContent = await window.electronAPI.getFolderContent(currentFolderAbsolutePath)
+                fileTreeContent = fileTreeContent.filter(file => file.isDirectory)
+                const subFolderEl = document.createElement('ul')
+                currentFolderEl.append(subFolderEl)
+                renderFileSubTree(fileTreeContent, subFolderEl)
+                event.target.innerText = '-'
+            } else {
+                event.target.setAttribute('isOpened', 'false')
+                const subTree = currentFolderEl.childNodes[2] // FIXME: use tag name instead of index
+                currentFolderEl.removeChild(subTree)
+                event.target.innerText = '+'
+            }
         })
     }
 }

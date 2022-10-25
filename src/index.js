@@ -51,12 +51,17 @@ app.on('ready', () => {
     createWindow()
 
     ipcMain.handle('getFolderContent', (event, absolutePath) => {
-        console.log(absolutePath)
         // FIXME: refactor
         // FIXME: sync to async
-        const fileTreeContent = fs.readdirSync(absolutePath, { // TODO: real folder
+        const fileTreeContent = fs.readdirSync(absolutePath, {
             withFileTypes: true 
-        })
+        }).map(fsDirEntity => ({
+            name: fsDirEntity.name,
+            // FIXME: refactor
+            isDirectory: fsDirEntity.isDirectory(),
+            isAudio: ['.mp3', '.wav', '.ogg'].includes(path.extname(path.join(absolutePath, fsDirEntity.name))) ? true : false, // FIXME: is audio file!
+            absolutePath: path.join(absolutePath, fsDirEntity.name)
+        }))
         return fileTreeContent
     })
 });

@@ -1,8 +1,10 @@
 const fileTreeListEl = document.querySelector('#fileTree ul')
 const fileListEl = document.querySelector('#fileList ul')
+const audioPlayer = document.querySelector('audio')
 
 let activeFolder
 let activeFile
+let playlist
 
 window.electronAPI.getFileTree((event, fileTreeContent) => {
     renderFileTree(fileTreeContent)
@@ -19,11 +21,12 @@ function renderFileTree (fileTreeContent) {
 }
 
 async function renderFileList (event) {
-    const fileListArr = await window.electronAPI.getFolderContent(event.target.getAttribute('absolutePath'))
+    let fileListArr = await window.electronAPI.getFolderContent(event.target.parentElement.getAttribute('absolutePath'))
     resetCurrentActiveDirectory: {
         activeFolder?.classList.remove('active')
         fileListEl.innerHTML = '' // 
     }
+    fileListArr =  fileListArr.filter(file => file.isAudio)
     for (const file of fileListArr) {
         const fileEl = document.createElement('li')
         fileEl.innerText = file.name
@@ -34,7 +37,10 @@ async function renderFileList (event) {
             activeFile = event.target
         })
         fileEl.addEventListener('dblclick', (event) => {
-            console.log('Playing!')
+            playlist = [...fileListArr].slice(fileListArr.indexOf(file))
+            console.log('Playing!', file.absolutePath)
+            audioPlayer.setAttribute('src', file.absolutePath)
+            audioPlayer.play()
             // TODO: pass track name to equalizer
             // TODO: pass track name to app title!
         })
@@ -42,6 +48,15 @@ async function renderFileList (event) {
     activeFolder = event.target
     activeFolder.className = 'active'
 }
+
+audioPlayer.addEventListener('ended', (event) => {
+    if (playlist[1]) {
+        playlist.shift()
+        const nextTrack = playlist[0]
+        audioPlayer.setAttribute('src', nextTrack.absolutePath)
+        audioPlayer.play()
+    }
+})
 
 // getFileTree
 // renderFileTree

@@ -1,19 +1,20 @@
 class Playlist {
     constructor (folderContent) {
+        console.log('FOLDERCONTEN', folderContent)
         this.queue = folderContent
             .filter(file => file.isAudio)
             .map(file => new AudioFile(file.name, file.absolutePath))
+        this.el
     }
     play (audioFile) {
-        this.queue = this.queue.slice(this.queue.indexOf(audioFile))
-        audioPlayer.setAttribute('src', audioFile.absolutePath)
-        audioPlayer.play()
+        const trackNumber = this.queue.indexOf(audioFile) 
+        this.queue.splice(0, trackNumber)
 
-        activeFileEl?.classList.remove('active') // FIXME: bad!
-        audioFile.el.className = 'active'
-        activeFileEl = audioFile.el
-        // TODO: pass track name to equalizer
-        // TODO: pass track name to app title!
+        // fire event
+        const makeFileActiveEvent = new CustomEvent('makeFileActive', {
+            detail: { audioFile: audioFile }
+        })
+        document.dispatchEvent(makeFileActiveEvent)
     }
     playNextTrack () {
         if (this.queue[1]) {
@@ -25,10 +26,13 @@ class Playlist {
         }
     }
     renderIn (targetEl) {
-        const listEl = document.createElement('ul')
+        this.el = document.createElement('ul')
         for (const file of this.queue) {
-            listEl.append(file.el)
+            this.el.append(file.el)
         }
-        targetEl.appendChild(listEl)
+        targetEl.appendChild(this.el)
+    }
+    clear () {
+        this.el.innerHTML = ''
     }
 }

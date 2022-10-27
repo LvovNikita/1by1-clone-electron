@@ -1,29 +1,27 @@
 class Folder {
     constructor(name, absolutePath) {
-        // TODO: add:
-        this.content
+        this.name = name
         this.absolutePath = absolutePath 
         this.isOpened = false
+        // TODO: this.isActive = false
+        this.content
         this.fileTree
+        this.expandButton = new HTMLExpandButton(this)
         this.el = document.createElement('li')
+        this.nameEl = document.createElement('span')
         // HTMLelem properties
-        this.el.setAttribute('absolutePath', absolutePath)
-        const folderNameEl = document.createElement('span')
-        folderNameEl.innerText = name
-        folderNameEl.addEventListener('click', async (event) => {
-            makeFolderActive(event) // FIXME: bad!
-            const folderContent = await window.electronAPI.getFolderContent(this.absolutePath)
-            playlist = new Playlist(folderContent)
-            playlist.renderIn(playlistEl)
+        this.nameEl.innerText = this.name
+        this.nameEl.addEventListener('click', async () => {
+            await this.makeActive()
         })
-        const expandButtonEl = new HTMLExpandButton('+', this)
-        this.el.appendChild(expandButtonEl)
-        this.el.appendChild(folderNameEl)
+        this.el.appendChild(this.expandButton)
+        this.el.appendChild(this.nameEl)
     }
+
     async loadContent () {
-        let folderContent = await window.electronAPI.getFolderContent(this.absolutePath)
-        this.content = folderContent.filter(file => file.isDirectory)
+        this.content = await window.electronAPI.getFolderContent(this.absolutePath)
     }
+
     async expand () {
         if (!this.content || !this.file) {
             await this.loadContent()
@@ -32,23 +30,28 @@ class Folder {
         this.fileTree.renderIn(this.el)
         this.isOpened = true
     }
+
     collapse () {
         this.fileTree.hide()
         this.isOpened = false
     }
+
+    async makeActive () {
+        await this.loadContent()
+
+        // fire event
+        const makeFolderActiveEvent = new CustomEvent('makeFolderActive', {
+            detail: { folder: this }
+        })
+        document.dispatchEvent(makeFolderActiveEvent)
+
+        this.nameEl.className = 'active' 
+    }
 }
+
 
 const HTMLFolder = new Proxy(Folder, {
     construct(target, argArray, newTarget) {
         return new target(...argArray).el
     }
 })
-
-
-// FIXME: bad!
-function makeFolderActive (event) {
-    activeFolder?.classList.remove('active') 
-    playlistEl.innerHTML = ''
-    activeFolder = event.target
-    activeFolder.className = 'active' 
-}

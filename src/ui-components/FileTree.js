@@ -1,5 +1,4 @@
 class FileTree {
-    // TODO: work with Folders instead!
     constructor(fileTreeContent) {
         this.content = fileTreeContent
         this.el

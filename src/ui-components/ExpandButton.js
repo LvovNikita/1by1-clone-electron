@@ -6,13 +6,13 @@ class Button {
 }
 
 class ExpandButton extends Button {
-    constructor (innerText, folder) {
-        super(innerText)
+    constructor (folder) {
+        super('+')
         this.el.className = 'expandFolderBtn'
         this.folder = folder
         // HTMLelem properties:
         this.el.addEventListener('click', async (event) => {
-            if (!this.folder.isOpened) {           
+            if (!this.folder.isOpened) {
                 await this.folder.expand()
                 this.el.innerText = '-'
             } else {

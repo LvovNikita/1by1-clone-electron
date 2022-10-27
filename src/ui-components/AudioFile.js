@@ -14,7 +14,11 @@ class AudioFile extends File {
         this.isAudio = true
         // HTMLelem properties:
         this.el.addEventListener('dblclick', (event) => {
-            playlist.play(this) // FIXME: global playlist!
+            // fire event
+            const playAudioFileEvent = new CustomEvent('playAudioFile', {
+                detail: { audioFile: this }
+            })
+            document.dispatchEvent(playAudioFileEvent)
         })
     }
 }

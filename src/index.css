@@ -38,10 +38,16 @@ li {
 .expandFolderBtn {
     font-size: 0.75em;
     margin-right: 0.2em;
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
+    padding: 0 0.2em;
+    background-color: lightgrey;
 }
 
 .active {
-    background-color: grey;
+    /* background-color: #eee; */
+    font-weight: bold;
 }
 
 audio {

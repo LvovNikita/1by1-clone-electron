@@ -16,7 +16,7 @@ main {
     padding: 1em
 }
 
-#fileList {
+#playlist {
     width: 70%; /* FIXME: temporary */
     height: 80vh; /* FIXME: temporary */
     overflow-y: scroll;

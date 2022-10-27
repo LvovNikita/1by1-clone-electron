@@ -6,7 +6,6 @@ const SUPPORTED_FORMATS = ['.mp3', '.wav', '.ogg']
 class FileTree {
     constructor(absolutePath) {
         this.content = fs
-            // FIXME: sync to async
             .readdirSync(absolutePath, {
                 withFileTypes: true 
             })

@@ -5,10 +5,13 @@ class Playlist {
             .map(file => new AudioFile(file.name, file.absolutePath))
     }
     play (audioFile) {
-        console.log('PLAY AUDIOFILE!')
         this.queue = this.queue.slice(this.queue.indexOf(audioFile))
         audioPlayer.setAttribute('src', audioFile.absolutePath)
         audioPlayer.play()
+
+        activeFileEl?.classList.remove('active') // FIXME: bad!
+        audioFile.el.className = 'active'
+        activeFileEl = audioFile.el
         // TODO: pass track name to equalizer
         // TODO: pass track name to app title!
     }
@@ -16,13 +19,16 @@ class Playlist {
         if (this.queue[1]) {
             this.queue.shift()
             const nextTrack = this.queue[0]
-            audioPlayer.setAttribute('src', nextTrack.absolutePath)
-            audioPlayer.play()
+            this.play(nextTrack)
+            // audioPlayer.setAttribute('src', nextTrack.absolutePath)
+            // audioPlayer.play()
         }
     }
     renderIn (targetEl) {
+        const listEl = document.createElement('ul')
         for (const file of this.queue) {
-            targetEl.append(file.el)
+            listEl.append(file.el)
         }
+        targetEl.appendChild(listEl)
     }
 }

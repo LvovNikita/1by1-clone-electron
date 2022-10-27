@@ -1,26 +1,23 @@
-class ExpandButton extends Button {
+class Button {
     constructor (innerText) {
+        this.el = document.createElement('button')
+        this.el.innerText = innerText
+    }
+}
+
+class ExpandButton extends Button {
+    constructor (innerText, folder) {
         super(innerText)
         this.el.className = 'expandFolderBtn'
+        this.folder = folder
+        // HTMLelem properties:
         this.el.addEventListener('click', async (event) => {
-            const currentFolderEl = event.target.parentElement
-            if (event.target.getAttribute('isOpened') !== 'true') {
-
-                const currentFolderAbsolutePath = currentFolderEl.getAttribute('absolutePath')
-                let fileTreeContent = await window.electronAPI.getFolderContent(currentFolderAbsolutePath)
-                fileTreeContent = fileTreeContent.filter(file => file.isDirectory)
-                
-                const fileSubTree = new FileTree(fileTreeContent)
-                fileSubTree.renderIn(currentFolderEl)
-
-                event.target.setAttribute('isOpened', 'true')
-
-                event.target.innerText = '-'
+            if (!this.folder.isOpened) {           
+                await this.folder.expand()
+                this.el.innerText = '-'
             } else {
-                event.target.setAttribute('isOpened', 'false')
-                const subTree = currentFolderEl.childNodes[2] // FIXME: use tag name instead of index
-                currentFolderEl.removeChild(subTree)
-                event.target.innerText = '+'
+                this.folder.collapse()
+                this.el.innerText = '+'
             }
         })
     }

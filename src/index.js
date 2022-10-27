@@ -20,7 +20,8 @@ const createWindow = () => {
     
     mainWindow.on('ready-to-show', () => {
         // Send file tree data to render initial tree
-        mainWindow.webContents.send('getFileTree', new FileTree(os.homedir()).content)
+        const initalFileTree = new FileTree(os.homedir())
+        mainWindow.webContents.send('getInitialFileTree', initalFileTree.content) // obj {name, absolutePath, isDirectory, isAudio}
     })
 };
 
@@ -31,7 +32,7 @@ app.on('ready', () => {
     // event listeners:
     ipcMain.handle('getFolderContent', (event, absolutePath) => {
         const fileTree = new FileTree(absolutePath)
-        return fileTree.content
+        return fileTree.content // obj {name, absolutePath, isDirectory, isAudio}
     })
 });
 

@@ -1,16 +1,24 @@
 class FileTree {
+    // TODO: work with Folders instead!
     constructor(fileTreeContent) {
         this.content = fileTreeContent
+        this.el
     }
 
     renderIn(targetEl) {
-        const listEl = document.createElement('ul')
+        this.el = document.createElement('ul')
         for (const { name, isDirectory, absolutePath } of this.content) {
             if (isDirectory) {
                 const folderEl = new HTMLFolder(name, absolutePath)
-                listEl.append(folderEl)
+                this.el.append(folderEl)
             }
         }
-        targetEl.appendChild(listEl)
+        targetEl.appendChild(this.el)
+    }
+
+    hide () {
+        this.el.remove()
     }
 }
+
+// TODO: add active folder!

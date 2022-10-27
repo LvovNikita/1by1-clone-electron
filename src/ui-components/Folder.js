@@ -1,8 +1,12 @@
 class Folder {
     constructor(name, absolutePath) {
+        // TODO: add:
+        this.content
         this.absolutePath = absolutePath 
+        this.isOpened = false
+        this.fileTree
         this.el = document.createElement('li')
-
+        // HTMLelem properties
         this.el.setAttribute('absolutePath', absolutePath)
         const folderNameEl = document.createElement('span')
         folderNameEl.innerText = name
@@ -12,9 +16,25 @@ class Folder {
             playlist = new Playlist(folderContent)
             playlist.renderIn(playlistEl)
         })
-        const expandButtonEl = new HTMLExpandButton('+')
+        const expandButtonEl = new HTMLExpandButton('+', this)
         this.el.appendChild(expandButtonEl)
         this.el.appendChild(folderNameEl)
+    }
+    async loadContent () {
+        let folderContent = await window.electronAPI.getFolderContent(this.absolutePath)
+        this.content = folderContent.filter(file => file.isDirectory)
+    }
+    async expand () {
+        if (!this.content || !this.file) {
+            await this.loadContent()
+            this.fileTree = new FileTree(this.content)
+        }
+        this.fileTree.renderIn(this.el)
+        this.isOpened = true
+    }
+    collapse () {
+        this.fileTree.hide()
+        this.isOpened = false
     }
 }
 

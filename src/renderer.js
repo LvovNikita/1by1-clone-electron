@@ -1,12 +1,12 @@
-const fileTreeListEl = document.querySelector('#fileTree ul')
-const playlistEl = document.querySelector('#fileList')
+const fileTreeListEl = document.querySelector('#fileTree')
+const playlistEl = document.querySelector('#playlist')
 const audioPlayer = document.querySelector('audio')
 
 let activeFolder
-let activeFile      // HTMLNode
+let activeFileEl      // HTMLNode
 let playlist
 
-window.electronAPI.getFileTree((event, fileTreeContent) => {
+window.electronAPI.getInitialFileTree((event, fileTreeContent) => { // obj {name, absolutePath, isDirectory, isAudio}
     const initalFileTree = new FileTree(fileTreeContent)
     initalFileTree.renderIn(fileTreeListEl)
 })

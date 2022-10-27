@@ -1,6 +1,6 @@
 const { contextBridge, ipcRenderer } = require('electron')
 
 contextBridge.exposeInMainWorld('electronAPI', {
-    getFileTree: (callback) => ipcRenderer.on('getFileTree', callback),
+    getInitialFileTree: (callback) => ipcRenderer.on('getInitialFileTree', callback),
     getFolderContent: (absolutePath) => ipcRenderer.invoke('getFolderContent', absolutePath)
 })

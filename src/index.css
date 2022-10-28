@@ -9,14 +9,14 @@ main {
     height: 90%
 }
 
-#fileTree {
+#dirTree {
     width: 30%; /* FIXME: temporary */
     height: 80vh; /* FIXME: temporary */
     overflow-y: scroll;
     padding: 1em
 }
 
-#playlist {
+#fileList {
     width: 70%; /* FIXME: temporary */
     height: 80vh; /* FIXME: temporary */
     overflow-y: scroll;

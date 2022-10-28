@@ -3,7 +3,7 @@ const path = require('node:path')
 
 const { app, BrowserWindow, ipcMain } = require('electron');
 
-const FileTree = require('./models/FileTree')
+const DirTree = require('./models/DirTree')
 
 
 const createWindow = () => {
@@ -20,8 +20,8 @@ const createWindow = () => {
     
     mainWindow.on('ready-to-show', () => {
         // Send file tree data to render initial tree
-        const initalFileTree = new FileTree(os.homedir())
-        mainWindow.webContents.send('getInitialFileTree', initalFileTree.content) // obj {name, absolutePath, isDirectory, isAudio}
+        const initalDirTree = new DirTree(os.homedir())
+        mainWindow.webContents.send('getInitialDirTree', initalDirTree.content) // obj {name, absolutePath, isDirectory, isAudio}
     })
 };
 
@@ -31,8 +31,8 @@ app.on('ready', () => {
 
     // event listeners:
     ipcMain.handle('getFolderContent', (event, absolutePath) => {
-        const fileTree = new FileTree(absolutePath)
-        return fileTree.content // obj {name, absolutePath, isDirectory, isAudio}
+        const dirTree = new DirTree(absolutePath)
+        return dirTree.content // obj {name, absolutePath, isDirectory, isAudio}
     })
 });
 

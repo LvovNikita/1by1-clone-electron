@@ -1,4 +1,4 @@
-class FileTree {
+class DirTree {
     constructor(fileTreeContent) {
         this.content = fileTreeContent
         this.el

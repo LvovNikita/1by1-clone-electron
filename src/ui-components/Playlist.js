@@ -1,12 +1,15 @@
 class Playlist {
     constructor (fileList) {
-        this.queue = [...fileList]
+        this.queue = [...app.activeFolder.fileList.content]
+        this.fileList = app.activeFolder.fileList
     }
 
     play (audioFile) {
-        const trackNumber = this.queue.indexOf(audioFile) 
-        this.queue.splice(0, trackNumber)
-        audioFile.makeActive()
+        const trackNumber = this.queue.indexOf(audioFile)
+        if (trackNumber > 0) {
+            this.queue.splice(0, trackNumber)
+            audioFile.makeActive()
+        } 
     }
 
     playNextTrack () {

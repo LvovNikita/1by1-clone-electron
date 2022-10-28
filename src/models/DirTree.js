@@ -3,7 +3,7 @@ const path = require('node:path')
 
 const SUPPORTED_FORMATS = ['.mp3', '.wav', '.ogg']
 
-class FileTree {
+class DirTree {
     constructor(absolutePath) {
         this.content = fs
             .readdirSync(absolutePath, {
@@ -19,4 +19,4 @@ class FileTree {
     }
 }
 
-module.exports = FileTree
+module.exports = DirTree

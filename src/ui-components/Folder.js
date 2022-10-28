@@ -2,11 +2,11 @@ class Folder {
     constructor(name, absolutePath) {
         this.name = name
         this.absolutePath = absolutePath 
-        this.isOpened = false
-        // TODO: this.isActive = false
         this.content
-        this.fileTree
+        this.subFoldersTree
+        this.fileList 
         this.expandButton = new HTMLExpandButton(this)
+        this.isOpened = false
         this.el = document.createElement('li')
         this.nameEl = document.createElement('span')
         // HTMLelem properties
@@ -25,27 +25,34 @@ class Folder {
     async expand () {
         if (!this.content || !this.file) {
             await this.loadContent()
-            this.fileTree = new FileTree(this.content)
+            this.subFoldersTree = new DirTree(this.content)
         }
-        this.fileTree.renderIn(this.el)
+        this.subFoldersTree.renderIn(this.el)
         this.isOpened = true
     }
 
     collapse () {
-        this.fileTree.hide()
+        this.subFoldersTree.hide()
         this.isOpened = false
     }
 
     async makeActive () {
         await this.loadContent()
 
-        const fileList = new FileList(this.content)
-        fileList.renderIn(playlistEl)
+        // FIXME:
+        
+        this.fileList = new FileList(this)
+        if (this.fileList.folder !== app.playlist?.fileList.folder) {
+            this.fileList.renderIn(app.fileListEl) // app global
+        } else {
+            app.fileListEl.innerHTML = ''
+            app.fileListEl.append(app.playlist.fileList.el)
+        }
 
+        // app global
         this.nameEl.className = 'active' 
-
-        activeFolderEl?.classList.remove('active')      // FIXME: bad global!
-        activeFolderEl = this.nameEl
+        app.activeFolder?.nameEl.classList.remove('active')
+        app.activeFolder = this 
     }
 }
 

@@ -20,9 +20,10 @@ class AudioFile extends File {
     }
 
     async play () {
-        const folderContent = await window.electronAPI.getFolderContent(this.folderAbsolutePath)
-        playlist = new Playlist(activeFileList.content)                                             // FIXME: bad global!
-        playlist.play(this)                                                                         // FIXME: bad global!
+        // app global
+        // app.playlist = new Playlist(app.activeFolder.fileList) 
+        app.playlist = new Playlist() 
+        app.playlist.play(this)
     }
 
     makeActive() {
@@ -31,8 +32,10 @@ class AudioFile extends File {
 
         this.el.className = 'active'
     
-        activeFileEl?.classList.remove('active')                                                    // FIXME: bad global!
-        activeFileEl = this.el
+        // app global
+        app.activeAudioFile?.el.classList.remove('active')
+        app.activeAudioFile = this
+
         // TODO: pass track name to equalizer
         // TODO: pass track name to app title!
     }

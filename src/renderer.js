@@ -1,44 +1,29 @@
-const fileTreeListEl = document.querySelector('#fileTree')
-const playlistEl = document.querySelector('#playlist')
+const dirTreeEl = document.querySelector('#dirTree')
 const audioPlayer = document.querySelector('audio')
 
-let activeFolderEl    // HTMLNode
-let activeFileEl      // HTMLNode
-let playlist
-let activeFileList
+// let activeFolderEl    // HTMLNode
+// let activeFileEl      // HTMLNode
+// let playlist
+// let activeFileList
 
-// class AudioPlayer {
-//     constructor () {
-//         this.activeFolderEl
-//         this.activeAudioFileEl
-//         this.playlist
-//     }
-// }
+class App {
+    constructor () {
+        this.playlist
+        this.activeFolder
+        // this.activeFileList
+        // this.activePlaylist
+        this.activeAudioFile
+        this.fileListEl = document.querySelector('#fileList') 
+    }
+}
 
-window.electronAPI.getInitialFileTree((event, fileTreeContent) => { // obj {name, absolutePath, isDirectory, isAudio}
-    const initalFileTree = new FileTree(fileTreeContent)
-    initalFileTree.renderIn(fileTreeListEl)
+const app = new App()
+
+window.electronAPI.getInitialDirTree((event, dirTreeContent) => { // obj {name, absolutePath, isDirectory, isAudio}
+    const initalDirTree = new DirTree(dirTreeContent)
+    initalDirTree.renderIn(dirTreeEl)
 })
 
 audioPlayer.addEventListener('ended', (event) => {
-    playlist.playNextTrack()
+    app.playlist.playNextTrack()
 })
-
-// Custom events:
-
-// document.addEventListener('playAudioFile', event => {
-//     const audioFile = event.detail.audioFile
-//     playlist.play(audioFile)
-// })
-
-// document.addEventListener('makeFolderActive', event => {
-//     const folder = event.detail.folder
-    
-//     playlist?.clear()
-    
-//     playlist = new Playlist(folder.content)
-//     playlist.renderIn(playlistEl)
-    
-//     activeFolderEl?.classList.remove('active')
-//     activeFolderEl = folder.nameEl
-// })

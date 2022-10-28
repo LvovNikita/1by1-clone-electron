@@ -39,13 +39,13 @@ class Folder {
     async makeActive () {
         await this.loadContent()
 
-        // fire event
-        const makeFolderActiveEvent = new CustomEvent('makeFolderActive', {
-            detail: { folder: this }
-        })
-        document.dispatchEvent(makeFolderActiveEvent)
+        const fileList = new FileList(this.content)
+        fileList.renderIn(playlistEl)
 
         this.nameEl.className = 'active' 
+
+        activeFolderEl?.classList.remove('active')      // FIXME: bad global!
+        activeFolderEl = this.nameEl
     }
 }
 

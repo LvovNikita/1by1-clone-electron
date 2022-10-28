@@ -19,5 +19,3 @@ class FileTree {
         this.el.remove()
     }
 }
-
-// TODO: add active folder!

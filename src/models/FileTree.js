@@ -13,7 +13,8 @@ class FileTree {
                 name: fsDirEntity.name,
                 isDirectory: fsDirEntity.isDirectory(),
                 isAudio: SUPPORTED_FORMATS.includes(path.extname(path.join(absolutePath, fsDirEntity.name))),
-                absolutePath: path.join(absolutePath, fsDirEntity.name)
+                absolutePath: path.join(absolutePath, fsDirEntity.name),
+                folderAbsolutePath: absolutePath
             }))
     }
 }

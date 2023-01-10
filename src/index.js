@@ -1,61 +1,48 @@
-const os = require('node:os')
-const path = require('node:path')
+const { app, ipcMain } = require('electron');
 
-const { app, BrowserWindow, ipcMain } = require('electron');
+const createWindow = require('./electronUtils/createWindow')
 
-const DirTree = require('./models/DirTree')
-
-
-const createWindow = () => {
-    const mainWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
-        webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),
-        },
-    });
-
-    mainWindow.loadFile(path.join(__dirname, 'index.html'));
-    mainWindow.webContents.openDevTools(); // FIXME: for testing only
-    
-    mainWindow.on('ready-to-show', () => {
-        // Send file tree data to render initial tree
-        const initalDirTree = new DirTree(os.homedir())
-        mainWindow.webContents.send('getInitialDirTree', initalDirTree.content) // obj {name, absolutePath, isDirectory, isAudio}
-    })
-};
-
+const Bus = require('./features/bus/Bus')
+const Folder = require('./features/fileBrowser/Folder')
+const clientSideFolderAdapter = require('./features/fileBrowser/clientSideFolderAdapter')
 
 app.on('ready', () => {
-    createWindow()
+    const mainWindow = createWindow()
+    const bus = new Bus()
+    
+    const { homeDirPath, rootFolderPath, mediaFolderPath } = bus
+    const homeFolder = new Folder(homeDirPath)
+    const rootFolder = new Folder(rootFolderPath)
+    const mediaFolder = new Folder(mediaFolderPath)
+    bus.rootFolders.push(homeFolder, rootFolder, mediaFolder)
 
-    // event listeners:
-    ipcMain.handle('getFolderContent', (event, absolutePath) => {
-        const dirTree = new DirTree(absolutePath)
-        return dirTree.content // obj {name, absolutePath, isDirectory, isAudio}
+    console.log(bus) // FIXME:
+
+    mainWindow.on('ready-to-show', async () => {
+        // SEND ROOT FOLDERS FROM APP TO CLIENT
+        try {
+            for (const rootFolder of bus.rootFolders) {
+                await rootFolder.open()
+                const clientSideRootFolder = clientSideFolderAdapter(rootFolder)
+                bus.clientSideRootFolders.push(clientSideRootFolder)
+            }
+            mainWindow.webContents.send('sendRootFolders', bus.clientSideRootFolders)
+        } catch (err) {
+            console.log(err)
+        }
     })
+
+    // Event listeners
+    ipcMain.handle('getSubFolders', (event, parentFolderPath) => {
+        const folder = new Folder(parentFolderPath)
+        console.log(folder)
+        folder.open().then(folder => console.log(folder.dirListVisibleOnly))
+    })
+
 });
+
 
 
 // ----- OS-specific fixes
 
-app.on('window-all-closed', () => {
-    // Quit when all windows are closed, except on macOS
-    if (process.platform !== 'darwin') {
-        app.quit();
-    }
-});
-
-
-app.on('activate', () => {
-    // OS X fix
-    if (BrowserWindow.getAllWindows().length === 0) {
-        createWindow();
-    }
-});
-
-
-// Handle creating/removing shortcuts on Windows when installing/uninstalling
-if (require('electron-squirrel-startup')) {
-    app.quit();
-}
+require('./electronUtils/osFixes')

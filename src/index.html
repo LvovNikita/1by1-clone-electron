@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <title>1by1 clone</title>
-    <link rel="stylesheet" href="index.css" />
+    <link rel="stylesheet" href="./static/index.css" />
 </head>
 
 <body>
@@ -12,7 +12,9 @@
         <audio controls src=""></audio>
     </div>
     <main>
-        <div id="dirTree"></div>
+        <div id="dirTree">
+            <ul><!-- DIR LIST RENDERS HERE --></ul>
+        </div>
         <div id="fileList"></div>
     </main>
     <div>Equalizer</div>
@@ -20,12 +22,13 @@
 </body>
 
 <!-- UI -->
-<script src="./ui-components/ExpandButton.js"></script>
+<script src="./features/fileBrowser/UIFolder.js"></script>
+<!-- <script src="./ui-components/ExpandButton.js"></script>
 <script src="./ui-components/DirTree.js"></script>
 <script src="./ui-components/Folder.js"></script>
 <script src="./ui-components/FileList.js"></script>
 <script src="./ui-components/AudioFile.js"></script>
-<script src="./ui-components/Playlist.js"></script>
+<script src="./ui-components/Playlist.js"></script> -->
 <!-- RENDERER -->
 <script src="./renderer.js"></script>
 

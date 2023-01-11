@@ -1,8 +1,10 @@
 const os = require('node:os')
 const path = require('node:path')
+const { EventEmitter } = require('node:stream')
 
-class Bus {
+class Bus extends EventEmitter {
     constructor() {
+        super()
         this.homeDirPath = os.homedir()
         if (os.platform() === 'linux') {
             this.rootFolderPath = '/'
@@ -11,6 +13,7 @@ class Bus {
         
         this.rootFolders = []
         this.clientSideRootFolders = []
+        // this.playlist
     }
 }
 

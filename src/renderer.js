@@ -1,32 +1,24 @@
+// const audioPlayer = document.querySelector('audio')
+// const fileList = document.querySelector('#fileList') 
 const dirTreeRootEl = document.querySelector('#dirTree ul')
 
 window.electronAPI.getRootFolders((event, rootFolders) => {
-    console.log('!!')
-    for (const rootFolder of rootFolders) {
-        const uiRootFolder = new UIFolder(rootFolder)
-        uiRootFolder.renderIn(dirTreeRootEl)
-    }
+    renderSubFolders(rootFolders, dirTreeRootEl)
 })
 
-// const audioPlayer = document.querySelector('audio')
+function renderSubFolders(subfolders, HTMLNode) {
+    for (const folder of subfolders) {
+        const uiFolder = new UIFolder(folder)
+        uiFolder.renderIn(HTMLNode)
+    }
+}
 
-// let activeFolderEl    // HTMLNode
-// let activeFileEl      // HTMLNode
-// let playlist
-// let activeFileList
-
-// class App {
-//     constructor () {
-//         this.playlist
-//         this.activeFolder
-//         // this.activeFileList
-//         // this.activePlaylist
-//         this.activeAudioFile
-//         this.fileListEl = document.querySelector('#fileList') 
-//     }
-// }
-
-// const app = new App()
+// 
+// TODO: рендерить в нужный элемент!
+//
+window.electronAPI.getExpandedFolderSubFolders((event, subfolders) => {
+    renderSubFolders(subfolders, dirTreeRootEl)
+})
 
 // audioPlayer.addEventListener('ended', (event) => {
 //     app.playlist.playNextTrack()

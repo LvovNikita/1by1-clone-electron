@@ -7,6 +7,11 @@ const bus = {
     activeFolderTitle: null
 }
 
+
+window.electronAPI.getSubFoldersOnClient((event, subFolders) => {
+    renderSubFolders(subFolders, bus.folderToExpand)
+})
+
 function renderSubFolders(subfolders, HTMLNode) {
     const ul = document.createElement('ul')
     HTMLNode.append(ul)
@@ -16,6 +21,8 @@ function renderSubFolders(subfolders, HTMLNode) {
     }
 }
 
-window.electronAPI.getSubFoldersOnClient((event, subfolders) => {
-    renderSubFolders(subfolders, bus.folderToExpand)
+
+window.electronAPI.getAudioFilesOnClient((event, audiofiles) => {
+    const uiFileList = new UIFileList(audiofiles)
+    console.log(uiFileList)
 })

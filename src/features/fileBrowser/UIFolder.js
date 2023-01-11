@@ -18,14 +18,18 @@ class UIFolder {
         
         HTMLNode.appendChild(this.HTMLElem)
     }
-    async getSubFolders() {
-        await window.electronAPI.getSubFolders(this.path)
-        this.bus.folderToExpand = this.HTMLElem
-    }
     select(event) {
         this.bus.activeFolderTitle?.classList.remove('active')
         event.target.className = 'active'
         this.bus.activeFolderTitle = event.target
+        this.getAudioFiles()
+    }
+    async getSubFolders() {
+        this.bus.folderToExpand = this.HTMLElem
+        await window.electronAPI.getSubFolders(this.path)
+    }
+    async getAudioFiles() {
+        await window.electronAPI.getAudioFiles(this.path)
     }
 }
 
@@ -45,6 +49,7 @@ class UIExpandButton {
         //     console.log(this.HTMLElem)
         //     console.log(this.UIFolder)
         // }
+        
         if (!this.isExpanded) expand:{
             this.UIFolder.getSubFolders()
             this.HTMLElem.innerText = '-'

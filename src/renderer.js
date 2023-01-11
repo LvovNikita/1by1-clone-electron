@@ -1,25 +1,21 @@
 // const audioPlayer = document.querySelector('audio')
 // const fileList = document.querySelector('#fileList') 
-const dirTreeRootEl = document.querySelector('#dirTree ul')
+const dirTreeHTMLNode = document.querySelector('#dirTree')
 
-window.electronAPI.getRootFolders((event, rootFolders) => {
-    renderSubFolders(rootFolders, dirTreeRootEl)
-})
+const bus = {
+    folderToExpand: dirTreeHTMLNode,
+    activeFolderTitle: null
+}
 
 function renderSubFolders(subfolders, HTMLNode) {
+    const ul = document.createElement('ul')
+    HTMLNode.append(ul)
     for (const folder of subfolders) {
         const uiFolder = new UIFolder(folder)
-        uiFolder.renderIn(HTMLNode)
+        uiFolder.renderIn(ul)
     }
 }
 
-// 
-// TODO: рендерить в нужный элемент!
-//
-window.electronAPI.getExpandedFolderSubFolders((event, subfolders) => {
-    renderSubFolders(subfolders, dirTreeRootEl)
+window.electronAPI.getSubFoldersOnClient((event, subfolders) => {
+    renderSubFolders(subfolders, bus.folderToExpand)
 })
-
-// audioPlayer.addEventListener('ended', (event) => {
-//     app.playlist.playNextTrack()
-// })

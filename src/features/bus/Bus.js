@@ -6,14 +6,13 @@ class Bus extends EventEmitter {
     constructor() {
         super()
         this.homeDirPath = os.homedir()
+        this.rootFolders = []
+        this.clientSideRootFolders = []
+        
         if (os.platform() === 'linux') {
             this.rootFolderPath = '/'
             this.mediaFolderPath = path.join('/media', os.userInfo().username) 
         }
-        
-        this.rootFolders = []
-        this.clientSideRootFolders = []
-        // this.playlist
     }
 }
 

@@ -12,15 +12,15 @@ app.on('ready', () => {
     const mainWindow = createWindow()
     const bus = new Bus()
     
-    // FIXME: linux only
     const { homeDirPath, rootFolderPath, mediaFolderPath } = bus
-    bus.rootFolders.push(
-        new NodeFolder(homeDirPath), 
-        new NodeFolder(rootFolderPath), 
-        new NodeFolder(mediaFolderPath)
-    )
+    bus.rootFolders.push(new NodeFolder(homeDirPath))
 
-    // console.log(bus)
+    if (rootFolderPath) {
+        bus.rootFolders.push(new NodeFolder(rootFolderPath))
+    } 
+    if (mediaFolderPath) { 
+        bus.rootFolders.push(new NodeFolder(mediaFolderPath))
+    }
 
     mainWindow.on('ready-to-show', async () => {
         // SEND ROOT FOLDERS FROM APP TO CLIENT
@@ -30,13 +30,14 @@ app.on('ready', () => {
                 const clientSideRootFolder = new Folder(rootFolder.path)
                 bus.clientSideRootFolders.push(clientSideRootFolder)
             }
-            mainWindow.webContents.send('sendRootFolders', bus.clientSideRootFolders)
+            mainWindow.webContents.send('sendSubFolders', bus.clientSideRootFolders)
         } catch (err) {
             console.log(err)
         }
     })
 
     // Event listeners
+    // RESPOND TO SUBFOLDERS REQUEST ON EXPAND BUTTON CLICK
     ipcMain.handle('getSubFolders', (event, parentFolderPath) => {
         const subfolders = []
         const folder = new NodeFolder(parentFolderPath)
@@ -47,14 +48,9 @@ app.on('ready', () => {
                     const subfolderPath = path.join(parentFolderPath, subfolder.name)
                     subfolders.push(new Folder(subfolderPath))
                 }
-                mainWindow.webContents.send('sendExpandedFolderSubfolders', subfolders)
+                mainWindow.webContents.send('sendSubFolders', subfolders)
             })
     })
-
 });
-
-
-
-// ----- OS-specific fixes
 
 require('./electronUtils/osFixes')

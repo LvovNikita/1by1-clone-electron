@@ -1,14 +1,13 @@
-const path = require('node:path')
-
 class Folder {
     constructor(absolutePath) {
         this.path = absolutePath
-        this.name = getFolderName(absolutePath)
+        this.name = Folder.extractFolderName(absolutePath) || '/'
     }
-}
-
-function getFolderName(absolutePath) {
-    return absolutePath.slice(absolutePath.lastIndexOf(path.sep) + 1) 
+    static extractFolderName(absolutePath) {
+        const hasForwardSlash = absolutePath.lastIndexOf('/') > -1
+        const separator = hasForwardSlash ? '/' : '\\'
+        return absolutePath.slice(absolutePath.lastIndexOf(separator) + 1) 
+    }
 }
 
 module.exports = Folder

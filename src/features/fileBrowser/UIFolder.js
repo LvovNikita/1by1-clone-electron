@@ -2,25 +2,30 @@ class UIFolder {
     constructor(folder) {
         this.name = folder.name
         this.path = folder.path
-        this.isOpen = false
-        // this.isActive = false
         this.HTMLElem
+        this.bus = bus // FIXME:
     }
     renderIn(HTMLNode) {
         this.HTMLElem = document.createElement('li')
         
-        // FIXME: зависимость от другого класса!
-        const expandButton = new UIExpandButton(this)
+        const expandButton = new UIExpandButton(this) // FIXME:
         this.HTMLElem.appendChild(expandButton.HTMLElem)
-
-        const folderTitle = document.createElement('span')
-        folderTitle.innerText = this.name
-        this.HTMLElem.appendChild(folderTitle)
+        
+        const HTMLfolderTitle = document.createElement('span')
+        HTMLfolderTitle.innerText = this.name
+        this.HTMLElem.appendChild(HTMLfolderTitle)
+        HTMLfolderTitle.addEventListener('click', this.select.bind(this))
         
         HTMLNode.appendChild(this.HTMLElem)
     }
     async getSubFolders() {
         await window.electronAPI.getSubFolders(this.path)
+        this.bus.folderToExpand = this.HTMLElem
+    }
+    select(event) {
+        this.bus.activeFolderTitle?.classList.remove('active')
+        event.target.className = 'active'
+        this.bus.activeFolderTitle = event.target
     }
 }
 
@@ -29,27 +34,24 @@ class UIExpandButton {
         this.HTMLElem = document.createElement('button')
         this.HTMLElem.innerText = '+'
         this.HTMLElem.className = 'expandFolderBtn'
+        this.HTMLElem.addEventListener('click', this.toggle.bind(this))
         this.UIFolder = UIFolder
-        this.HTMLElem.addEventListener('click', expandFolder.bind(this))
+        this.isExpanded = false
+    }
+    toggle(event) {
+        // debugLogs: {
+        //     console.log(event)
+        //     console.log(this)
+        //     console.log(this.HTMLElem)
+        //     console.log(this.UIFolder)
+        // }
+        if (!this.isExpanded) expand:{
+            this.UIFolder.getSubFolders()
+            this.HTMLElem.innerText = '-'
+        } else collapse:{
+            this.UIFolder.HTMLElem.querySelector('ul').remove()
+            this.HTMLElem.innerText = '+'
+        }
+        this.isExpanded = !this.isExpanded
     }
 }
-
-function expandFolder(event) {
-    debugLogs: {
-        console.log(event)
-        console.log(this)
-        console.log(this.HTMLElem)
-        console.log(this.UIFolder)
-    }
-    // FIXME: обращение в другой класс!
-    this.UIFolder.getSubFolders()
-}
-
-
-// if (!this.folder.isOpened) {
-//     await this.folder.expand()
-//     this.el.innerText = '-'
-// } else {
-//     this.folder.collapse()
-//     this.el.innerText = '+'
-// }

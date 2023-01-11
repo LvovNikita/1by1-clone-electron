@@ -1,9 +1,19 @@
 class UIFileList {
-    constructor(files = []) {
-        this.files = files // File[]
+    constructor(uiFiles = []) {
+        this.files = uiFiles
+        this.HTMLElem
+        this.bus = bus
     }
-    // HTML: render
-    // HTML: clear
+    renderIn(HTMLNode) {
+        this.HTMLElem = document.createElement('ul')
+        for (const file of this.files) {
+            file.renderIn(this.HTMLElem)
+        }
+        HTMLNode.innerHTML = ''
+        HTMLNode.appendChild(this.HTMLElem)
+        this.bus.activeFileList = this
+        console.log(this.bus) // FIXME:
+    }
 }
 
 // class PlayList

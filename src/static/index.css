@@ -60,3 +60,8 @@ audio {
 audio::-webkit-media-controls-panel {
     background-color: white;
 }
+
+#currentTrack {
+    background-color: black;
+    color: white
+}

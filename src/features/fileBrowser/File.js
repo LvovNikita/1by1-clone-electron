@@ -8,9 +8,3 @@ class File {
 }
 
 module.exports = File
-
-// HTML: HTMLElem
-// HTML: select
-
-// class AudioFile
-// play()

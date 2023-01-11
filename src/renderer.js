@@ -1,10 +1,13 @@
 // const audioPlayer = document.querySelector('audio')
-// const fileList = document.querySelector('#fileList') 
+const fileListHTMLNode = document.querySelector('#fileList') 
 const dirTreeHTMLNode = document.querySelector('#dirTree')
 
 const bus = {
     folderToExpand: dirTreeHTMLNode,
-    activeFolderTitle: null
+    activeFolderTitle: null,
+    activeFileList: null,
+    playlist: null,
+    currentTrack: null
 }
 
 
@@ -22,7 +25,10 @@ function renderSubFolders(subfolders, HTMLNode) {
 }
 
 
-window.electronAPI.getAudioFilesOnClient((event, audiofiles) => {
-    const uiFileList = new UIFileList(audiofiles)
-    console.log(uiFileList)
+// TODO:
+window.electronAPI.getAudioFilesOnClient((event, audioFiles) => {
+    const uiAudioFiles = audioFiles.map(audioFile => new UIFile(audioFile))
+    const uiFileList = new UIFileList(uiAudioFiles)
+    bus.activeFileList = uiFileList
+    uiFileList.renderIn(fileListHTMLNode)
 })
